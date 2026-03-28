@@ -8,7 +8,7 @@ load_dotenv()
 st.set_page_config(page_title="ShipmentDoc Compliance Portal", page_icon="🚛", layout="wide")
 
 def load_latest():
-    files = glob.glob("data/processed/compliance_results_*.csv") or glob.glob("data/processed/latest_results.csv")
+    files = glob.glob("data/processed/compliance_results_*.csv")
     if not files:
         return None, None
     latest = max(files, key=os.path.getctime)
@@ -76,11 +76,8 @@ with right:
     if results_df is None:
         st.info("No results yet — click Start Analysis.")
     else:
-        try:
-            run_time = latest_file.split("compliance_results_")[1].replace(".csv","")
-            run_fmt = run_time[:4]+"-"+run_time[4:6]+"-"+run_time[6:8]+" "+run_time[9:11]+":"+run_time[11:13]
-        except:
-            run_fmt = "Latest Results"
+        run_time = latest_file.split("compliance_results_")[1].replace(".csv","")
+        run_fmt = run_time[:4]+"-"+run_time[4:6]+"-"+run_time[6:8]+" "+run_time[9:11]+":"+run_time[11:13]
         flagged = len(results_df[results_df["is_compliant"]==False])
         compliant = len(results_df[results_df["is_compliant"]==True])
         st.subheader("📋 Compliance Results — " + run_fmt)
