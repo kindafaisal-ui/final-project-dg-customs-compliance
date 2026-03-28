@@ -1,165 +1,87 @@
-# ShipmentDoc Compliance AI
-### Dangerous Goods & Customs Clearance Automation
+# Lead Qualification Agent — Minimal Prototype
 
-**Consultant:** Kinda Faisal — Freelance AI Consultant  
-**Client:** Medium German Freight Forwarder (50–200 employees)  
-**Live Demo:** [Open Portal](https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/)  
-**Built in:** 2 days as a Proof of Concept  
-**Bootcamp:** AI Consulting Bootcamp — Final Project — Week 9
+A working prototype of the Lead Qualification Agent for marketing/consulting agencies.
 
----
-
-## The Story
-
-I met Chleo at a dinner. She runs a medium-sized freight forwarding company in Germany and her team spends 9–12 minutes manually checking every shipment document for compliance with international Dangerous Goods and Customs regulations.
-
-She told me: *"I am scared of AI — I don't trust it."*
-
-Two days later I came back with this.
-
----
-
-## What Problem Does This Solve?
-
-Every international shipment must comply with strict regulations before goods can cross borders:
-
-- **ADR 2023** — Dangerous Goods by road
-- **IMDG Code** — Dangerous Goods by sea  
-- **IATA DGR** — Dangerous Goods by air
-- **EU Customs Code (UCC)** — Export declarations, HS codes, EORI numbers
-
-Missing a tunnel restriction code, using a 6-digit instead of 8-digit HS code, or having the wrong EORI format can cause fines up to **€50,000 per violation** and customs holds of **1–2 days at the border**.
-
-The current process: **9–12 minutes per document, manually, with a 5–10% error rate.**
-
----
-
-## What Does This System Do?
-
-The AI reads shipment document data, checks it against international compliance rules, and tells the operations team exactly what is wrong and what to do — in plain language, in 44 seconds.
-
-**The final decision always stays with the human.** The AI flags issues. The human approves or acts.
-
----
-
-## Results
-
-| Metric | Before | After | Improvement |
-|---|---|---|---|
-| Processing time | 603 seconds | 44 seconds | 93% faster |
-| Error rate | 5–10% | 1.2% | 94% reduction |
-| AI confidence | — | 90.7% | — |
-| Annual savings | — | €80,000+ | ROI: 1,589% |
-| AI quality score | — | 8.7/10 | LLM-as-judge |
-
----
-
-## System Components
-
-| Component | Technology | Purpose |
-|---|---|---|
-| AI Agent | LangChain + GPT-3.5-Turbo | DG and customs compliance checking |
-| Compliance Portal | Streamlit | Operations staff daily workspace |
-| Automation | n8n Cloud | Scheduled email alerts + webhook |
-| Monitoring | LangSmith EU | Full AI decision transparency |
-| Evaluation | LLM-as-Judge | Quality assurance — 8.7/10 |
-| Dataset | 500 synthetic documents | 7 document types × 10 routes |
-
----
-
-## Repository Structure
+## Architecture
 
 ```
-final-project-kinda-faisal/
-├── use_case_definition.md + .pdf
-├── poc/
-│   ├── poc_workflow.json
-│   └── poc_documentation.md + .pdf
-├── roi_risk_assessment.md + .pdf
-├── compliance/
-│   ├── eu_ai_act_compliance.md + .pdf
-│   └── gdpr_documentation.md + .pdf
-├── strategic_plan.md + .pdf
-├── presentation.pptx
-├── mvp/
-│   ├── dashboard_app.py
-│   ├── main.py
-│   ├── generate_dataset.py
-│   ├── requirements.txt
-│   ├── .env.example
-│   ├── agent/langchain_agent.py
-│   ├── data/raw/shipments.csv
-│   └── mvp_documentation.md + .pdf
-└── README.md
+Lead Form Input
+      ↓
+[Node 1] retrieve_context   → RAG: queries ChromaDB for relevant agency knowledge
+      ↓
+[Node 2] ask_questions      → LLM generates follow-up questions + simulates answers
+      ↓
+[Node 3] make_decision      → LLM qualifies or disqualifies with reasoning
+      ↓
+Slack-style summary output
 ```
 
----
+## Setup
 
-## EU AI Act Classification
-
-**LIMITED RISK** — The system is a decision-support tool, not an autonomous decision-maker.
-
-- Used by a **private company** — not by customs authorities or border control
-- **Human-in-the-loop** — every flagged document reviewed before dispatch
-- Based on **internationally defined rules** — not discretionary AI judgement
-- Full **LangSmith audit trail** — every AI decision is traceable
-
----
-
-## GDPR Compliance
-
-Personal data processed: shipper name/address, consignee name/address, driver name, emergency contact, EORI number.
-
-- **Legal basis:** Contract performance + legal obligation (EU UCC, ADR 2023)
-- **Data location:** EU servers only — LangSmith Frankfurt endpoint
-- **Retention:** 90 days for results, 30 days for AI traces
-- **POC data:** Synthetic only — no real personal data used
-
----
-
-## Green Technology
-
-- GPT-3.5-Turbo not GPT-4 — **10× less energy** per API call
-- EU servers — **higher renewable energy** mix
-- Off-peak processing — n8n runs at midnight
-- 80% fewer customs holds — **less trucks idling = less CO₂**
-
----
-
-## How to Run
-
+### 1. Install dependencies
 ```bash
-git clone https://github.com/kindafaisal-ui/final-project-dg-customs-compliance.git
-cd final-project-dg-customs-compliance/mvp
-python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env        # Add your API keys
-python generate_dataset.py
-python main.py
-streamlit run dashboard_app.py
 ```
 
-Open browser at: **http://localhost:8501**
+### 2. Set your OpenAI API key
+```bash
+# Mac/Linux
+export OPENAI_API_KEY=your_key_here
 
----
+# Windows
+set OPENAI_API_KEY=your_key_here
+```
 
-## Live Systems
+### 3. Run the prototype
+```bash
+python agent.py
+```
 
-| System | Purpose |
-|---|---|
-| [Compliance Portal](https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/) | Operations staff daily workspace |
-| [LangSmith](https://eu.smith.langchain.com) | AI decision audit trail |
-| [n8n](https://kinda5.app.n8n.cloud) | Automation workflow |
-| [Tableau](https://dub01.online.tableau.com) | KPI dashboard |
+## What you'll see
 
----
+The agent processes 2 sample leads:
+- **Lead 1** (Sarah Chen): B2B SaaS company with $4M revenue → should QUALIFY
+- **Lead 2** (Mike Torres): B2C e-commerce with $200K revenue → should DISQUALIFY
 
-## About the Consultant
+For each lead, you'll see:
+1. RAG retrieval from the agency knowledge base
+2. Generated qualifying questions
+3. Simulated lead answers
+4. Final qualify/disqualify decision with reasoning
+5. A Slack-style notification preview
 
-**Kinda Faisal** is a freelance AI consultant with 6 years of hands-on experience in international logistics. After completing an AI Consulting Bootcamp, she combines deep domain expertise with practical AI implementation skills — building solutions that are transparent, affordable, and specifically designed for the freight industry.
+## Key Files
 
-*"I don't just use AI. I build AI that logistics professionals can actually trust."*
+| File | Purpose |
+|------|---------|
+| `agent.py` | Main agent code — all logic lives here |
+| `requirements.txt` | Python dependencies |
+| `README.md` | This file |
 
----
+## What's simulated (vs. production)
 
-*Final Project — AI Consulting Bootcamp — Week 9 — 2026*
+| Prototype | Production equivalent |
+|-----------|----------------------|
+| Inline text knowledge base | Real agency PDFs ingested into ChromaDB |
+| `SAMPLE_LEADS` dict | n8n webhook receiving live form submissions |
+| `sim_answer_*` fields | Lead replies collected via Gmail integration |
+| Console print output | Actual Slack message sent via n8n |
+| ChromaDB local | Pinecone cloud vector DB |
+
+## Extending this prototype
+
+To connect to n8n, replace the `run_prototype()` call with a Flask endpoint:
+
+```python
+from flask import Flask, request
+app = Flask(__name__)
+
+@app.route("/qualify", methods=["POST"])
+def qualify_lead():
+    lead_data = request.json
+    result = agent.invoke(AgentState(lead_info=lead_data, ...))
+    # n8n calls this endpoint, gets result, routes to Slack
+    return {"decision": result["decision"], "summary": result["summary"]}
+```
+
+Then in n8n: Form Trigger → HTTP Request (this endpoint) → Slack node
