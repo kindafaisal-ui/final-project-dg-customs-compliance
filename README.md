@@ -3,7 +3,7 @@
 
 **Consultant:** Kinda Faisal - Freelance AI Consultant
 **Client:** Medium German Freight Forwarder (50-200 employees)
-**Live Demo:** https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/
+**Live Demo:** https://final-project-dg-customs-compliance-mffpsnzkusr6pmhcb6e8xv.streamlit.app/
 **GitHub:** https://github.com/kindafaisal-ui/final-project-dg-customs-compliance
 
 ## The Story
