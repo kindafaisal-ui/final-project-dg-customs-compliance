@@ -1,87 +1,48 @@
-# Lead Qualification Agent — Minimal Prototype
+# ShipmentDoc Compliance AI
+### Dangerous Goods and Customs Clearance Automation
 
-A working prototype of the Lead Qualification Agent for marketing/consulting agencies.
+**Consultant:** Kinda Faisal - Freelance AI Consultant
+**Client:** Medium German Freight Forwarder (50-200 employees)
+**Live Demo:** https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/
+**GitHub:** https://github.com/kindafaisal-ui/final-project-dg-customs-compliance
 
-## Architecture
+## The Story
+I met Chleo at a dinner. She runs a medium-sized freight forwarding company in Germany. Her team spends 9-12 minutes manually checking every shipment document for compliance with international Dangerous Goods and Customs regulations. She told me: I am scared of AI - I do not trust it. Two days later I came back with this.
 
-```
-Lead Form Input
-      ↓
-[Node 1] retrieve_context   → RAG: queries ChromaDB for relevant agency knowledge
-      ↓
-[Node 2] ask_questions      → LLM generates follow-up questions + simulates answers
-      ↓
-[Node 3] make_decision      → LLM qualifies or disqualifies with reasoning
-      ↓
-Slack-style summary output
-```
+## What Problem Does This Solve?
+Every international shipment must comply with strict regulations before goods can cross borders: ADR 2023, IMDG Code, IATA DGR, EU Customs Code. Missing a tunnel restriction code or wrong HS code can cause fines up to 50,000 EUR and customs holds of 1-2 days. Current process: 9-12 minutes per document manually with 5-10 percent error rate.
 
-## Setup
+## Results
+| Metric | Before | After | Improvement |
+|---|---|---|---|
+| Processing time | 603 seconds | 44 seconds | 93 percent faster |
+| Error rate | 5-10 percent | 1.2 percent | 94 percent reduction |
+| AI confidence | - | 90.7 percent | - |
+| Annual savings | - | EUR 80,000+ | ROI 1,589 percent |
+| AI quality score | - | 8.7/10 | LLM-as-judge |
 
-### 1. Install dependencies
-```bash
+## Repository Structure
+- use_case_definition.md + pdf - Business problem, JTBD, MoSCoW, stakeholders
+- roi_risk_assessment.md + pdf - ROI 12+36 months, risk matrix, Green Tech
+- strategic_plan.md + pdf - GTM, phases, pricing, Green Tech
+- poc/ - n8n workflow + poc documentation
+- compliance/ - EU AI Act + GDPR documentation
+- mvp/ - Working Streamlit application + code
+
+## EU AI Act Classification
+LIMITED RISK - Human-in-the-loop, private company use, internationally defined rules, full LangSmith audit trail.
+
+## How to Run
+git clone https://github.com/kindafaisal-ui/final-project-dg-customs-compliance.git
+cd final-project-dg-customs-compliance/mvp
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
-```
+cp .env.example .env
+python generate_dataset.py
+streamlit run dashboard_app.py
 
-### 2. Set your OpenAI API key
-```bash
-# Mac/Linux
-export OPENAI_API_KEY=your_key_here
+## About
+Kinda Faisal is a freelance AI consultant with 6 years of hands-on experience in international logistics. After completing an AI Consulting Bootcamp, she combines deep domain expertise with practical AI implementation skills.
 
-# Windows
-set OPENAI_API_KEY=your_key_here
-```
-
-### 3. Run the prototype
-```bash
-python agent.py
-```
-
-## What you'll see
-
-The agent processes 2 sample leads:
-- **Lead 1** (Sarah Chen): B2B SaaS company with $4M revenue → should QUALIFY
-- **Lead 2** (Mike Torres): B2C e-commerce with $200K revenue → should DISQUALIFY
-
-For each lead, you'll see:
-1. RAG retrieval from the agency knowledge base
-2. Generated qualifying questions
-3. Simulated lead answers
-4. Final qualify/disqualify decision with reasoning
-5. A Slack-style notification preview
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `agent.py` | Main agent code — all logic lives here |
-| `requirements.txt` | Python dependencies |
-| `README.md` | This file |
-
-## What's simulated (vs. production)
-
-| Prototype | Production equivalent |
-|-----------|----------------------|
-| Inline text knowledge base | Real agency PDFs ingested into ChromaDB |
-| `SAMPLE_LEADS` dict | n8n webhook receiving live form submissions |
-| `sim_answer_*` fields | Lead replies collected via Gmail integration |
-| Console print output | Actual Slack message sent via n8n |
-| ChromaDB local | Pinecone cloud vector DB |
-
-## Extending this prototype
-
-To connect to n8n, replace the `run_prototype()` call with a Flask endpoint:
-
-```python
-from flask import Flask, request
-app = Flask(__name__)
-
-@app.route("/qualify", methods=["POST"])
-def qualify_lead():
-    lead_data = request.json
-    result = agent.invoke(AgentState(lead_info=lead_data, ...))
-    # n8n calls this endpoint, gets result, routes to Slack
-    return {"decision": result["decision"], "summary": result["summary"]}
-```
-
-Then in n8n: Form Trigger → HTTP Request (this endpoint) → Slack node
+Final Project - AI Consulting Bootcamp - Week 9 - 2026
