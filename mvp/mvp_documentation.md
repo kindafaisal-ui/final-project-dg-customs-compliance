@@ -3,7 +3,7 @@
 
 **Consultant:** Kinda Faisal — Freelance AI Consultant
 **MVP Type:** Python + Streamlit + LangChain + n8n
-**Live URL:** https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/
+**Live URL:** https://final-project-dg-customs-compliance-mffpsnzkusr6pmhcb6e8xv.streamlit.app/
 **GitHub:** https://github.com/kindafaisal-ui/final-project-dg-customs-compliance
 **Date:** March 2026
 
@@ -219,7 +219,7 @@ Runs LLM-as-judge evaluation on AI-generated insights.
 
 ## 8. Live Demo
 
-**Public URL:** https://final-project-dg-customs-compliance-6bqksxcg6fzuf9vvjx2czt.streamlit.app/
+**Public URL:** https://final-project-dg-customs-compliance-mffpsnzkusr6pmhcb6e8xv.streamlit.app/
 
 The live demo shows:
 - Real compliance results from the AI agent
