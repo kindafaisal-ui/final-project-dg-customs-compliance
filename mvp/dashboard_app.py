@@ -32,8 +32,8 @@ def get_key(name):
 
 def run_check(doc):
     try:
-        import openai
-        client = openai.OpenAI(api_key=get_key("OPENAI_API_KEY"))
+        import anthropic
+        client = anthropic.Anthropic(api_key=get_key("ANTHROPIC_API_KEY"))
         prompt = (
             "You are a DG and customs compliance expert.\\n"
             "Check this document:\\n"
@@ -47,13 +47,12 @@ def run_check(doc):
             "ACTION: one plain sentence for operations team\\n"
             "COMPLIANT: YES or NO"
         )
-        r = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+        r = client.messages.create(
+            model="claude-sonnet-4-20250514",
             messages=[{"role":"user","content":prompt}],
-            max_tokens=250,
-            temperature=0
+            max_tokens=1500,
         )
-        text = r.choices[0].message.content
+        text = r.content[0].text
         dg, customs, action, ok = "", "", "", False
         for line in text.strip().split("\\n"):
             if line.startswith("DG_CHECK:"): dg = line.replace("DG_CHECK:","").strip()
