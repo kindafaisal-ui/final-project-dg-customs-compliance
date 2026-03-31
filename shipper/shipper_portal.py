@@ -92,7 +92,7 @@ CRITICAL WARNINGS:
 SUBMISSION CHECKLIST:
 - [final checks]"""
 
-            response = client.messages.create(
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 max_tokens=1500,
                 messages=[{"role": "user", "content": prompt}]
