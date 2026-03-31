@@ -13,7 +13,7 @@ BG_IMAGE = "/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABt
 
 st.markdown(f"""
 <style>
-[data-testid="stAppViewContainer"] {{
+[data-testid="stAppViewContainer"], p, li, ul, ol, .stMarkdown, .stMarkdown p, .stMarkdown li {{
     background-image: linear-gradient(rgba(10,25,47,0.82), rgba(10,25,47,0.82)), url("data:image/png;base64,{BG_IMAGE}");
     background-size: cover;
     background-position: center;
@@ -114,3 +114,4 @@ SUBMISSION CHECKLIST:
 
 st.divider()
 st.markdown('<p style="color:#AABBCC;text-align:center;font-size:0.8rem">ShipDoc · Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026 · EU AI Act Compliant · Human-in-the-loop</p>', unsafe_allow_html=True)
+# This line intentionally left blank
