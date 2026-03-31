@@ -22,8 +22,8 @@ SAMPLE_DOCS = [
 
 def run_check(doc):
     try:
-        import openai
-        client = openai.OpenAI(api_key=get_key("OPENAI_API_KEY"))
+        import anthropic
+        client = anthropic.Anthropic(api_key=get_key("ANTHROPIC_API_KEY"))
         prompt = (
             "You are a DG and customs compliance expert.\n"
             "Check this shipment document:\n"
