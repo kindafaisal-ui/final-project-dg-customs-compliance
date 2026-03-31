@@ -87,10 +87,11 @@ DOCUMENTS REQUIRED:
    Common mistake: [mistake]
 
 CRITICAL WARNINGS:
-- [warnings]
-
+1. [warning]
+2. [warning]
 SUBMISSION CHECKLIST:
-- [final checks]"""
+1. [check]
+2. [check]"""
 
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
