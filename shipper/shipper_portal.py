@@ -32,7 +32,7 @@ st.markdown('<div class="main-title">📦 ShipDoc — Shipper Document Portal</d
 st.markdown('<div class="sub-title">Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026</div>', unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
 
-st.markdown('<p style="color:#aab4be">Fill in your shipment details below. Our AI will generate the exact document checklist you need to submit to your freight forwarder.</p>', unsafe_allow_html=True)
+st.markdown('<p style="color:#FFFFFF">Fill in your shipment details below. Our AI will generate the exact document checklist you need to submit to your freight forwarder.</p>', unsafe_allow_html=True)
 st.divider()
 
 col1, col2 = st.columns(2)
@@ -113,4 +113,4 @@ SUBMISSION CHECKLIST:
             st.error(f"Error: {str(e)}")
 
 st.divider()
-st.markdown('<p style="color:#556677;text-align:center;font-size:0.8rem">ShipDoc · Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026 · EU AI Act Compliant · Human-in-the-loop</p>', unsafe_allow_html=True)
+st.markdown('<p style="color:#AABBCC;text-align:center;font-size:0.8rem">ShipDoc · Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026 · EU AI Act Compliant · Human-in-the-loop</p>', unsafe_allow_html=True)
