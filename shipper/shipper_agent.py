@@ -5,9 +5,9 @@ before submitting to Chleo's freight forwarding company.
 """
 
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+
+
 
 ROUTES = {
     "DE → CH": {"customs": ["Export Declaration", "EUR.1 Certificate"], "notes": "EU-Switzerland customs union — EUR.1 required for preferential tariff"},
