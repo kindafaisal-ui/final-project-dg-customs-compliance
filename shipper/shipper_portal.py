@@ -75,7 +75,7 @@ A shipper needs to send:
 - DG Class: {dg_class or 'N/A'}
 - UN Number: {un_number or 'N/A'}
 
-Generate a precise document checklist. For each document state:
+Generate a precise document checklist. IMPORTANT: Use ONLY numbered lists (1. 2. 3.) - never use * or - for bullets. For each document state:
 1. Document name and regulation (ADR 2023 / IMDG / IATA DGR / EU UCC)
 2. Exact required fields
 3. One common mistake to avoid
