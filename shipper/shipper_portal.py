@@ -102,7 +102,7 @@ SUBMISSION CHECKLIST:
 
             st.markdown('<div style="background:rgba(26,158,155,0.15);border:1px solid #1A9E9B;border-radius:12px;padding:1.5rem;margin-top:1rem">', unsafe_allow_html=True)
             st.markdown(f'<p style="color:#1A9E9B;font-weight:700;font-size:1.1rem">📋 Document Checklist — {route}</p>', unsafe_allow_html=True)
-            st.markdown(f'<div style="color:white;white-space:pre-wrap;font-size:0.95rem;line-height:1.7">{result.replace(chr(10), "<br>")}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:white;white-space:pre-wrap;font-size:0.95rem;line-height:1.7">{result.replace(chr(10), "<br>").replace("* ", "• ")}</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
