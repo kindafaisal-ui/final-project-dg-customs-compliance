@@ -22,8 +22,8 @@ SAMPLE_DOCS = [
 
 def run_check(doc):
     try:
-        import anthropic
-        client = anthropic.Anthropic(api_key=get_key("ANTHROPIC_API_KEY"))
+        import openai
+        client = openai.OpenAI(api_key=get_key("OPENAI_API_KEY"))
         prompt = (
             "You are a DG and customs compliance expert.\n"
             "Check this shipment document:\n"
@@ -38,11 +38,11 @@ def run_check(doc):
             "COMPLIANT: YES or NO"
         )
         r = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="gpt-3.5-turbo",
             messages=[{"role":"user","content":prompt}],
             max_tokens=1000,
         )
-        text = r.content[0].text
+        text = r.choices[0].message.content
         dg, customs, action, ok = "Not assessed", "Not assessed", "Manual review required", False
         for line in text.strip().split("\n"):
             if line.startswith("DG_CHECK:"): dg = line.replace("DG_CHECK:","").strip()
