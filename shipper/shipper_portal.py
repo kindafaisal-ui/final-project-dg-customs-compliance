@@ -107,7 +107,7 @@ SUBMISSION CHECKLIST:
 
             st.markdown("<br>", unsafe_allow_html=True)
             st.success("✅ Checklist generated! Please prepare all documents before submitting to your freight forwarder.")
-            st.markdown('<p style='color:#2DD4BF'>💡 Once your documents are ready, send them to your freight forwarder. They will run a final AI compliance check before dispatch.</p>', unsafe_allow_html=True)
+            st.markdown("<p style='color:#2DD4BF'>💡 Once your documents are ready, send them to your freight forwarder. They will run a final AI compliance check before dispatch.</p>", unsafe_allow_html=True)
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
