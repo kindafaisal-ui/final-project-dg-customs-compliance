@@ -86,8 +86,8 @@ DOCUMENTS REQUIRED:
    Required fields: [fields]
    Common mistake: [mistake]
 
-CRITICAL WARNINGS:
-- [warnings]
+COMPLIANCE NOTES:
+All documents reviewed by AI agent
 
 SUBMISSION CHECKLIST:
 - [final checks]"""
