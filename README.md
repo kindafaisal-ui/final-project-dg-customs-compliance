@@ -15,23 +15,96 @@
 
 ## 📋 Problem Statement
 
-International logistics compliance is one of the most time-consuming tasks in the supply chain. Operations staff spend **70–80% of their working day** manually checking whether dangerous goods and customs documents are complete, correctly formatted, and compliant with international agreements (ADR, IMDG, IATA, EU UCC, CMR).
+International logistics compliance is one of the most time-consuming tasks in the supply chain. Operations staff spend **70–80% of their working day** manually checking whether dangerous goods and customs documents are complete, correctly formatted, and compliant with international agreements (ADR, IMDG, IATA, EU UCC, CMR). One mistake means a €50,000 fine or a truck stopped at the border for 2 days.
 
 ---
 
-## 💡 Solution
-
-Two AI-powered portals that automate document compliance checking across both dangerous goods regulations and customs clearance requirements.
+## 💡 Solution — Two AI Agents
 
 ### Agent 1 — Freight Forwarder Portal (n8n + OpenAI GPT-4o)
-- Operations team runs final compliance check before dispatch
-- n8n workflow: webhook → regulation selector → GPT-4o → structured checklist
-- Checks: ADR/IMDG/IATA + EU customs per route
+
+Used by the **operations team** for final compliance checks before dispatch.
+```
+Shipment Documents (500/day)
+        ↓
+n8n Schedule Trigger (every night 00:00)
+        ↓
+Google Sheets — reads all pending shipments
+        ↓
+AI Compliance Logic Engine (GPT-4o via LangChain)
+        ↓
+    ┌───────────────────────────────┐
+    │  DG Check: ADR · IMDG · IATA │
+    │  Customs: UCC · CMR · EUR.1  │
+    └───────────────────────────────┘
+        ↓
+LangSmith — full audit trail logged
+        ↓
+📧 Gmail Alert — email to management at 06:00
+        ↓
+Streamlit Portal — operations team reviews flagged docs
+        ↓
+✅ Human Decision — final approval before dispatch
+```
+
+**Key features:**
+- Runs automatically every night at midnight
+- Checks all 6 regulations simultaneously per shipment
+- Sends consolidated email alert to management at 06:00
+- Full LangSmith audit trail for every AI decision
+- Human makes the final dispatch decision — always
+
+---
 
 ### Agent 2 — Shipper Portal (Python + OpenAI GPT-4o)
-- Shippers check documents before submitting to freight forwarder
-- 3-column UI: Shipment Details · Customs Information · Dangerous Goods
-- Pre-validation + AI checklist in 0.44 seconds
+
+Used by **shippers** at the start of the process, before submitting documents to their freight forwarder.
+```
+Shipper fills 3-column form:
+┌─────────────────┬──────────────────┬──────────────────┐
+│ Shipment Details│Customs Information│ Dangerous Goods  │
+│ Route           │ HS Code (8-digit) │ DG Yes/No        │
+│ Goods           │ EORI Number       │ DG Class         │
+│ Transport Mode  │ Commercial Invoice│ UN Number        │
+└─────────────────┴──────────────────┴──────────────────┘
+        ↓
+Pre-Validation (instant — before AI call)
+— HS code must be 8 digits
+— EORI must start with DE
+— UN number must start with UN
+        ↓
+shipper_agent.py → OpenAI GPT-4o
+        ↓
+4-section compliance checklist:
+1. Customs Compliance
+2. Dangerous Goods Compliance
+3. Critical Flags
+4. Submission Checklist
+        ↓
+✅ Shipper prepares documents → sends to Freight Forwarder
+```
+
+---
+
+## 🏗️ Full System Architecture
+```
+┌─────────────────────────────────────────────────────────┐
+│                      SHIPPER                            │
+│  Uses Agent 2 — Shipper Portal                          │
+│  Gets AI checklist → prepares all documents             │
+└─────────────────────────┬───────────────────────────────┘
+                          │ Documents submitted
+                          ▼
+┌─────────────────────────────────────────────────────────┐
+│              FREIGHT FORWARDER / OPERATIONS             │
+│  Uses Agent 1 — Freight Forwarder Portal                │
+│  n8n runs overnight → email alert at 06:00              │
+│  Reviews flagged documents in Streamlit portal          │
+└─────────────────────────┬───────────────────────────────┘
+                          │ Human approves ✅
+                          ▼
+                  SHIPMENT DISPATCHED
+```
 
 ---
 
@@ -41,9 +114,66 @@ Two AI-powered portals that automate document compliance checking across both da
 |--------|-------|
 | Response time | 0.44 seconds |
 | Accuracy (LangSmith) | 90.7% |
-| Human confidence rating | 8.7 / 10 |
+| Human confidence rating | 8.7 / 10 before every decision |
 | Hallucination rate | 1.2% |
-| EU AI Act | Limited Risk (Art. 52) |
+| Test scenarios | 50 |
+
+---
+
+## ⚖️ EU AI Act — Limited Risk (Article 52)
+
+- **Classification:** Limited Risk — not High Risk because the AI never makes autonomous decisions
+- **Transparency:** Users are always informed they are interacting with an AI system
+- **Human in the Loop:** Every flagged document is reviewed by a human before dispatch. The AI recommends — the human decides. Always.
+- **Audit Trail:** Every AI decision logged in LangSmith with full traceability
+- **No prohibited practices:** System does not use manipulation, social scoring, or biometric identification
+
+---
+
+## 🌿 Green Tech
+
+- **Serverless deployment** — Streamlit Cloud, no always-on servers
+- **Off-peak processing** — n8n workflow runs at midnight on low-demand energy
+- **GPT-4o efficiency** — single API call per compliance check, no redundant processing
+- **80% fewer customs holds** → less trucks idling at borders → less CO₂ emissions
+- **Paper reduction** — AI automation replaces manual document printing and re-checking
+
+---
+
+## 🔒 GDPR Compliance
+
+- **Legal basis:** Article 6(1)(b) — processing necessary for contract performance
+- **Data minimisation:** Only shipment data collected (HS codes, EORI, goods description)
+- **No personal data stored** beyond the session
+- **Third-party transfers:** OpenAI API covered by EU Data Processing Agreement
+- **EU servers:** Frankfurt region
+
+---
+
+## 📜 Regulations Covered
+
+| Regulation | Scope | Status |
+|-----------|-------|--------|
+| ADR 2023 | Road dangerous goods | ✅ |
+| IMDG Code | Sea dangerous goods | ✅ |
+| IATA DGR | Air dangerous goods | ✅ |
+| EU UCC | Customs clearance | ✅ |
+| CMR Convention | Road freight documents | ✅ |
+| EUR.1 / REX | Preferential tariffs | ✅ |
+
+**Routes:** DE→CH · DE→GB · DE→US · DE→CN · DE→FR · DE→PL · DE→TR
+
+---
+
+## 💰 Solution Options
+
+| Tier | Price | Includes |
+|------|-------|---------|
+| Option A — Basic | €499/month | Shipper Portal only |
+| Option B — Standard | €999/month | Both portals + n8n + email alerts |
+| Option C — Enterprise | €1,999/month | Full system + custom routes + API access |
+
+**ROI Year 1 (Option B):** 215% return · Break-even < 1 month
 
 ---
 
@@ -83,13 +213,7 @@ streamlit run shipper/shipper_portal.py
 
 ---
 
-## 📜 Regulations Covered
-
-ADR 2023 · IMDG Code · IATA DGR · EU UCC · CMR Convention · EUR.1 / REX · EU AI Act Art. 52 · GDPR Art. 6(1)(b)
-
----
-
 ## 👤 Author
 
-**Kinda Faisal** — 6 years logistics & supply chain operations
+**Kinda Faisal** — 6 years logistics & supply chain operations experience
 GitHub: [kindafaisal-ui](https://github.com/kindafaisal-ui)
