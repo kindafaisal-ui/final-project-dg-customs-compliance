@@ -1,87 +1,95 @@
-# Lead Qualification Agent — Minimal Prototype
+# ShipmentDoc Compliance AI
+**AI-powered Dangerous Goods & Customs Clearance Compliance System**
+*Logistics / Supply Chain · Medium Enterprise · Kinda Faisal · 2026*
 
-A working prototype of the Lead Qualification Agent for marketing/consulting agencies.
+---
 
-## Architecture
+## 🔗 Live Portals
 
+| Portal | URL | For |
+|--------|-----|-----|
+| 🚛 Shipper Portal | https://final-project-dg-customs-compliance-3djmsuecztvsuux7jgpyai.streamlit.app/ | Shippers preparing shipment documents |
+| 🏢 Freight Forwarder Portal | https://final-project-dg-customs-compliance-mffpsnzkusr6pmhcb6e8xv.streamlit.app/ | Operations teams doing final compliance check |
+
+---
+
+## 📋 Problem Statement
+
+International logistics compliance is one of the most time-consuming tasks in the supply chain. Operations staff spend **70–80% of their working day** manually checking whether dangerous goods and customs documents are complete, correctly formatted, and compliant with international agreements (ADR, IMDG, IATA, EU UCC, CMR).
+
+---
+
+## 💡 Solution
+
+Two AI-powered portals that automate document compliance checking across both dangerous goods regulations and customs clearance requirements.
+
+### Agent 1 — Freight Forwarder Portal (n8n + OpenAI GPT-4o)
+- Operations team runs final compliance check before dispatch
+- n8n workflow: webhook → regulation selector → GPT-4o → structured checklist
+- Checks: ADR/IMDG/IATA + EU customs per route
+
+### Agent 2 — Shipper Portal (Python + OpenAI GPT-4o)
+- Shippers check documents before submitting to freight forwarder
+- 3-column UI: Shipment Details · Customs Information · Dangerous Goods
+- Pre-validation + AI checklist in 0.44 seconds
+
+---
+
+## 📊 Performance
+
+| Metric | Value |
+|--------|-------|
+| Response time | 0.44 seconds |
+| Accuracy (LangSmith) | 90.7% |
+| Human confidence rating | 8.7 / 10 |
+| Hallucination rate | 1.2% |
+| EU AI Act | Limited Risk (Art. 52) |
+
+---
+
+## 📁 Repository Structure
 ```
-Lead Form Input
-      ↓
-[Node 1] retrieve_context   → RAG: queries ChromaDB for relevant agency knowledge
-      ↓
-[Node 2] ask_questions      → LLM generates follow-up questions + simulates answers
-      ↓
-[Node 3] make_decision      → LLM qualifies or disqualifies with reasoning
-      ↓
-Slack-style summary output
+final-project-dg-customs-compliance/
+├── shipper/
+│   ├── shipper_portal.py
+│   ├── shipper_agent.py
+│   └── requirements.txt
+├── compliance/
+│   ├── eu_ai_act_compliance.md
+│   └── gdpr_documentation.md
+├── poc/
+│   ├── poc_documentation.md
+│   └── poc_workflow.json
+├── README.md
+├── use_case_definition.md
+├── strategic_plan.md
+├── roi_risk_assessment.md
+├── presentation.pptx
+├── final_report.pdf
+└── .env.example
 ```
 
-## Setup
+---
 
-### 1. Install dependencies
+## ⚙️ Setup
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/kindafaisal-ui/final-project-dg-customs-compliance.git
+cd final-project-dg-customs-compliance
+pip install -r shipper/requirements.txt
+cp .env.example .env
+# Add your OpenAI API key to .env
+streamlit run shipper/shipper_portal.py
 ```
 
-### 2. Set your OpenAI API key
-```bash
-# Mac/Linux
-export OPENAI_API_KEY=your_key_here
+---
 
-# Windows
-set OPENAI_API_KEY=your_key_here
-```
+## 📜 Regulations Covered
 
-### 3. Run the prototype
-```bash
-python agent.py
-```
+ADR 2023 · IMDG Code · IATA DGR · EU UCC · CMR Convention · EUR.1 / REX · EU AI Act Art. 52 · GDPR Art. 6(1)(b)
 
-## What you'll see
+---
 
-The agent processes 2 sample leads:
-- **Lead 1** (Sarah Chen): B2B SaaS company with $4M revenue → should QUALIFY
-- **Lead 2** (Mike Torres): B2C e-commerce with $200K revenue → should DISQUALIFY
+## 👤 Author
 
-For each lead, you'll see:
-1. RAG retrieval from the agency knowledge base
-2. Generated qualifying questions
-3. Simulated lead answers
-4. Final qualify/disqualify decision with reasoning
-5. A Slack-style notification preview
-
-## Key Files
-
-| File | Purpose |
-|------|---------|
-| `agent.py` | Main agent code — all logic lives here |
-| `requirements.txt` | Python dependencies |
-| `README.md` | This file |
-
-## What's simulated (vs. production)
-
-| Prototype | Production equivalent |
-|-----------|----------------------|
-| Inline text knowledge base | Real agency PDFs ingested into ChromaDB |
-| `SAMPLE_LEADS` dict | n8n webhook receiving live form submissions |
-| `sim_answer_*` fields | Lead replies collected via Gmail integration |
-| Console print output | Actual Slack message sent via n8n |
-| ChromaDB local | Pinecone cloud vector DB |
-
-## Extending this prototype
-
-To connect to n8n, replace the `run_prototype()` call with a Flask endpoint:
-
-```python
-from flask import Flask, request
-app = Flask(__name__)
-
-@app.route("/qualify", methods=["POST"])
-def qualify_lead():
-    lead_data = request.json
-    result = agent.invoke(AgentState(lead_info=lead_data, ...))
-    # n8n calls this endpoint, gets result, routes to Slack
-    return {"decision": result["decision"], "summary": result["summary"]}
-```
-
-Then in n8n: Form Trigger → HTTP Request (this endpoint) → Slack node
+**Kinda Faisal** — 6 years logistics & supply chain operations
+GitHub: [kindafaisal-ui](https://github.com/kindafaisal-ui)
