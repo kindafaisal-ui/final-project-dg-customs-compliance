@@ -1,21 +1,33 @@
 import streamlit as st
-import os
+import base64, os
 from shipper_agent import get_required_documents
 
 st.set_page_config(page_title="ShipDoc — Shipper Compliance Portal", page_icon="🚛", layout="wide")
 
-st.markdown("""
-<style>
-.card{background:rgba(26,158,155,0.07);border:1px solid rgba(26,158,155,0.25);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem}
-.section-header{color:#1A9E9B;font-weight:700;font-size:1.05rem;margin-bottom:0.6rem}
-.result-box{background:rgba(26,158,155,0.10);border:1px solid #1A9E9B;border-radius:12px;padding:1.5rem;margin-top:1rem}
-.flag-box{background:rgba(245,158,11,0.12);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}
-.error-box{background:rgba(239,68,68,0.12);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}
-.success-box{background:rgba(34,197,94,0.10);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}
-.stButton>button{background:linear-gradient(135deg,#1A9E9B,#0D7C7A);color:white;border:none;border-radius:8px;padding:0.6rem 2rem;font-weight:700;font-size:1rem;width:100%}
-label{color:#CBD5E1 !important}
-</style>
-""", unsafe_allow_html=True)
+def get_bg_css():
+    bg_url = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80"
+    return f"""
+    <style>
+    .stApp {{
+        background-image: linear-gradient(rgba(10,20,40,0.72), rgba(10,20,40,0.72)), url("{bg_url}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+    .card{{background:rgba(26,158,155,0.10);border:1px solid rgba(26,158,155,0.30);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem}}
+    .section-header{{color:#1A9E9B;font-weight:700;font-size:1.05rem;margin-bottom:0.6rem}}
+    .result-box{{background:rgba(26,158,155,0.10);border:1px solid #1A9E9B;border-radius:12px;padding:1.5rem;margin-top:1rem}}
+    .flag-box{{background:rgba(245,158,11,0.12);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+    .error-box{{background:rgba(239,68,68,0.12);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+    .success-box{{background:rgba(34,197,94,0.10);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+    .stButton>button{{background:linear-gradient(135deg,#1A9E9B,#0D7C7A);color:white;border:none;border-radius:8px;padding:0.6rem 2rem;font-weight:700;font-size:1rem;width:100%}}
+    label{{color:#CBD5E1 !important}}
+    h1,h2,h3,p,span,div{{color:white}}
+    .stSelectbox label, .stTextInput label, .stRadio label{{color:#CBD5E1 !important}}
+    </style>
+    """
+
+st.markdown(get_bg_css(), unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align:center;padding:1rem 0 0.5rem">
