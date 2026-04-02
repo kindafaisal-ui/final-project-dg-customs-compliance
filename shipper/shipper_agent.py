@@ -1,149 +1,118 @@
-"""
-Shipper Document Agent
-Guides shippers to prepare correct DG & customs documents
-before submitting to Chleo's freight forwarding company.
-"""
-
 import os
-from dotenv import load_dotenv
+from openai import OpenAI
 
-load_dotenv()
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 ROUTES = {
-    "DE → CH": {"customs": ["Export Declaration", "EUR.1 Certificate"], "notes": "EU-Switzerland customs union — EUR.1 required for preferential tariff"},
-    "DE → GB": {"customs": ["Export Declaration", "Commercial Invoice", "Packing List"], "notes": "Post-Brexit — full UK customs declaration required. EORI number mandatory."},
-    "DE → US": {"customs": ["Export Declaration", "Commercial Invoice", "Packing List", "AES Filing"], "notes": "EEI filing required for shipments over $2,500. HS code mandatory."},
-    "DE → CN": {"customs": ["Export Declaration", "Commercial Invoice", "Packing List", "Certificate of Origin"], "notes": "China customs requires Chinese description of goods."},
-    "DE → FR": {"customs": ["CMR Waybill"], "notes": "Intra-EU — CMR waybill sufficient for road transport."},
-    "DE → PL": {"customs": ["CMR Waybill"], "notes": "Intra-EU — CMR waybill sufficient for road transport."},
-    "DE → TR": {"customs": ["Export Declaration", "EUR.1 Certificate", "Commercial Invoice"], "notes": "EU-Turkey customs union — EUR.1 required."},
+    "DE → CH": {"notes": "EUR.1 certificate required. ADR tunnel restriction code for alpine routes."},
+    "DE → GB": {"notes": "Post-Brexit: UKIMS declaration required. GB EORI needed."},
+    "DE → US": {"notes": "ISF 10+2 filing required 24h before loading. AES filing for exports over $2,500."},
+    "DE → CN": {"notes": "China CIQ inspection certificate required."},
+    "DE → FR": {"notes": "EU internal: SAD document. Intrastat if above threshold."},
+    "DE → PL": {"notes": "EU internal: SAD document. Intrastat if above threshold."},
+    "DE → TR": {"notes": "A.TR or EUR.1 for preferential tariff. Turkish customs value declaration."},
 }
 
-DG_CLASSES = {
-    "1": {"name": "Explosives", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["Explosive Transport Permit", "Competent Authority Approval"]},
-    "2": {"name": "Gases", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["Pressure Test Certificate"]},
-    "3": {"name": "Flammable Liquids", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": []},
-    "4": {"name": "Flammable Solids", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": []},
-    "5": {"name": "Oxidizing Substances", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": []},
-    "6.1": {"name": "Toxic Substances", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["MSDS Sheet", "Medical Certificate if required"]},
-    "6.2": {"name": "Infectious Substances", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["Biological Substance Permit", "MSDS Sheet"]},
-    "7": {"name": "Radioactive Material", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["Radiation Safety Certificate", "Competent Authority Approval"]},
-    "8": {"name": "Corrosives", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": ["MSDS Sheet"]},
-    "9": {"name": "Miscellaneous", "regulations": ["ADR", "IMDG", "IATA"], "extra_docs": []},
-}
-
-TRANSPORT_MODES = {
-    "Road (ADR)": "ADR",
-    "Sea (IMDG)": "IMDG",
-    "Air (IATA)": "IATA",
+CUSTOMS_DOCS = {
+    "DE → CH": ["Commercial Invoice", "Packing List", "EORI Number", "EUR.1 Movement Certificate", "Customs Export Declaration (ATLAS)", "Swiss Import Declaration"],
+    "DE → GB": ["Commercial Invoice", "Packing List", "GB EORI Number", "UKIMS Declaration", "Customs Export Declaration", "Rules of Origin Certificate"],
+    "DE → US": ["Commercial Invoice", "Packing List", "EORI Number", "AES/EEI Filing", "ISF 10+2 Filing", "Certificate of Origin"],
+    "DE → CN": ["Commercial Invoice", "Packing List", "EORI Number", "CIQ Inspection Certificate", "Certificate of Origin", "Customs Export Declaration"],
+    "DE → FR": ["Commercial Invoice", "Packing List", "EORI Number", "SAD Document", "Intrastat Declaration"],
+    "DE → PL": ["Commercial Invoice", "Packing List", "EORI Number", "SAD Document", "Intrastat Declaration"],
+    "DE → TR": ["Commercial Invoice", "Packing List", "EORI Number", "A.TR or EUR.1 Certificate", "Turkish Customs Value Declaration"],
 }
 
 
-def get_required_documents(route, is_dangerous_goods, dg_class=None, transport_mode=None, un_number=None, goods_description=None):
-    """
-    AI Agent that determines exactly what documents a shipper needs.
-    Returns a structured checklist.
-    """
-    try:
-        import openai
-        client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY", ""))
+def get_required_documents(
+    route,
+    goods_description,
+    transport_mode,
+    is_dg,
+    dg_class=None,
+    un_number=None,
+    hs_code=None,
+    eori_number=None,
+    commercial_invoice=False,
+    packing_list=False,
+):
+    validation_errors = []
 
-        route_info = ROUTES.get(route, {"customs": ["Export Declaration"], "notes": "Standard customs documentation required"})
-        dg_info = DG_CLASSES.get(dg_class, {}) if dg_class else {}
+    # Pre-validation
+    if hs_code and len(hs_code.strip()) != 8:
+        validation_errors.append(f"HS Code '{hs_code}' is {len(hs_code.strip())} digits — EU exports require exactly 8 digits.")
+    if eori_number and not eori_number.strip().upper().startswith("DE"):
+        validation_errors.append(f"EORI Number '{eori_number}' invalid — German EORI numbers must start with 'DE'.")
+    if is_dg == "Yes" and un_number and not un_number.strip().upper().startswith("UN"):
+        validation_errors.append(f"UN Number '{un_number}' format incorrect — must start with 'UN' (e.g. UN3480).")
 
-        prompt = f"""You are a logistics compliance expert specializing in dangerous goods and customs documentation for German freight forwarders.
+    route_notes = ROUTES.get(route, {}).get("notes", "")
+    required_customs_docs = CUSTOMS_DOCS.get(route, ["Commercial Invoice", "Packing List", "EORI Number", "Customs Export Declaration"])
 
-A shipper needs to send a shipment with the following details:
+    docs_prepared = []
+    if commercial_invoice:
+        docs_prepared.append("Commercial Invoice")
+    if packing_list:
+        docs_prepared.append("Packing List")
+
+    dg_section = ""
+    if is_dg == "Yes":
+        reg = "ADR 2023" if "Road" in transport_mode else "IMDG Code" if "Sea" in transport_mode else "IATA DGR"
+        dg_section = f"""
+DANGEROUS GOODS:
+- DG Class: {dg_class}
+- UN Number: {un_number}
+- Applicable Regulation: {reg}
+"""
+
+    prompt = f"""You are an expert international logistics compliance officer specialising in dangerous goods and customs clearance for German exporters.
+
+SHIPMENT DETAILS:
 - Route: {route}
-- Goods Description: {goods_description or 'Not specified'}
-- Dangerous Goods: {'Yes' if is_dangerous_goods else 'No'}
-- DG Class: {dg_class or 'N/A'} {f"({dg_info.get('name', '')})" if dg_info else ''}
-- UN Number: {un_number or 'N/A'}
-- Transport Mode: {transport_mode or 'Not specified'}
-- Route Notes: {route_info.get('notes', '')}
+- Goods: {goods_description}
+- Transport Mode: {transport_mode}
+- HS Code: {hs_code if hs_code else "Not provided"}
+- EORI Number: {eori_number if eori_number else "Not provided"}
+- Documents already prepared: {", ".join(docs_prepared) if docs_prepared else "None"}
+{dg_section}
 
-Generate a precise document checklist for this shipper. For each document:
-1. State exactly what information must be included
-2. Flag any common mistakes to avoid
-3. Note the regulation it comes from (ADR 2023 / IMDG / IATA DGR / EU UCC)
+Provide a compliance checklist with these 4 sections:
 
-Format your response as:
+1. CUSTOMS COMPLIANCE
+Required documents for this route. Flag any HS code or EORI issues. Reference EU UCC where relevant.
 
-DOCUMENTS REQUIRED:
-1. [Document Name] — [Regulation]
-   Required fields: [list key fields]
-   Common mistake: [one specific mistake to avoid]
+2. DANGEROUS GOODS COMPLIANCE
+{"Check " + ("ADR 2023" if "Road" in transport_mode else "IMDG Code" if "Sea" in transport_mode else "IATA DGR") + " compliance for Class " + str(dg_class) + ", " + str(un_number) + ". List all required DG documents, markings, and labels." if is_dg == "Yes" else "No dangerous goods declared."}
 
-CRITICAL WARNINGS:
-- [Any critical compliance warnings]
+3. CRITICAL FLAGS
+Any critical issues that must be resolved before dispatch.
 
-SUBMISSION CHECKLIST:
-- [Final checklist items before submitting]"""
+4. SUBMISSION CHECKLIST
+Complete list of documents to submit to the freight forwarder.
 
-        response = client.messages.create(
-            model="gpt-3.5-turbo",
-            max_tokens=1500,
-            messages=[{"role": "user", "content": prompt}]
+Be specific and cite exact regulations (e.g. ADR 2023 Section 5.4.1, EU UCC Article 162).
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_tokens=1200,
         )
 
         return {
             "success": True,
-            "route": route,
-            "is_dangerous_goods": is_dangerous_goods,
-            "dg_class": dg_class,
-            "transport_mode": transport_mode,
-            "un_number": un_number,
             "ai_guidance": response.choices[0].message.content,
-            "standard_customs_docs": route_info.get("customs", []),
-            "route_notes": route_info.get("notes", ""),
+            "validation_errors": validation_errors,
+            "required_customs_docs": required_customs_docs,
+            "route_notes": route_notes,
+            "eori_required": True,
         }
 
     except Exception as e:
         return {
             "success": False,
             "error": str(e),
-            "route": route,
+            "validation_errors": validation_errors,
         }
-
-
-def main():
-    """Test the Shipper Agent with sample shipments"""
-    print("=" * 65)
-    print("Shipper Document Agent")
-    print("Guides shippers to prepare correct documents for Chleo")
-    print("=" * 65)
-
-    test_cases = [
-        {
-            "route": "DE → CH",
-            "is_dangerous_goods": True,
-            "dg_class": "3",
-            "transport_mode": "Road (ADR)",
-            "un_number": "UN1263",
-            "goods_description": "Paint and varnish products"
-        },
-        {
-            "route": "DE → GB",
-            "is_dangerous_goods": False,
-            "dg_class": None,
-            "transport_mode": "Road (ADR)",
-            "un_number": None,
-            "goods_description": "Automotive parts"
-        },
-    ]
-
-    for i, shipment in enumerate(test_cases, 1):
-        print(f"\n{'='*65}")
-        print(f"SHIPMENT {i}: {shipment['route']} — {'DG Class ' + shipment['dg_class'] if shipment['is_dangerous_goods'] else 'Non-DG'}")
-        print("=" * 65)
-        result = get_required_documents(**shipment)
-        if result["success"]:
-            print(f"\nStandard Customs Docs: {', '.join(result['standard_customs_docs'])}")
-            print(f"Route Notes: {result['route_notes']}")
-            print(f"\nAI Guidance:\n{result['ai_guidance']}")
-        else:
-            print(f"Error: {result['error']}")
-
-
-if __name__ == "__main__":
-    main()
