@@ -13,22 +13,38 @@ st.markdown(f"""
     background-position: center;
     background-attachment: fixed;
 }}
-.card{{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;backdrop-filter:blur(6px)}}
+/* Cards */
+.card{{background:rgba(10,20,40,0.65);border:1px solid rgba(94,232,228,0.35);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;backdrop-filter:blur(8px)}}
 .section-header{{color:#5EE8E4;font-weight:700;font-size:1.05rem;margin-bottom:0.6rem}}
-.result-box{{background:rgba(255,255,255,0.10);border:1px solid rgba(94,232,228,0.5);border-radius:12px;padding:1.5rem;margin-top:1rem;backdrop-filter:blur(6px)}}
-.flag-box{{background:rgba(245,158,11,0.18);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
-.error-box{{background:rgba(239,68,68,0.18);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
-.success-box{{background:rgba(34,197,94,0.15);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+/* Result boxes */
+.result-box{{background:rgba(10,20,40,0.70);border:1px solid rgba(94,232,228,0.5);border-radius:12px;padding:1.5rem;margin-top:1rem;backdrop-filter:blur(8px)}}
+.flag-box{{background:rgba(245,158,11,0.25);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:#FEF3C7;font-size:0.92rem}}
+.error-box{{background:rgba(239,68,68,0.25);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:#FEE2E2;font-size:0.92rem}}
+.success-box{{background:rgba(34,197,94,0.20);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:#DCFCE7;font-size:0.92rem}}
+/* Button */
 .stButton>button{{background:linear-gradient(135deg,#1A9E9B,#0D7C7A);color:white;border:none;border-radius:8px;padding:0.6rem 2rem;font-weight:700;font-size:1rem;width:100%}}
-label, .stRadio label, .stCheckbox label{{color:#E2E8F0 !important}}
-h1,h2,h3{{color:white}}
+/* ALL text labels white */
+label, .stRadio label, .stCheckbox label, .stSelectbox label, .stTextInput label,
+div[data-testid="stMarkdownContainer"] p,
+.stRadio div[role="radiogroup"] label span p {{color:#F1F5F9 !important;font-weight:500}}
+/* Input fields — white text, semi-dark background */
+input, textarea, .stSelectbox div[data-baseweb="select"] > div {{
+    color: #F1F5F9 !important;
+    background-color: rgba(15,25,50,0.75) !important;
+}}
+/* Selectbox text */
+div[data-baseweb="select"] span {{color:#F1F5F9 !important}}
+/* Headings */
+h1,h2,h3{{color:white !important}}
+/* Checkbox text */
+.stCheckbox span {{color:#F1F5F9 !important}}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align:center;padding:1rem 0 0.5rem">
-<p style="color:#5EE8E4;font-size:2rem;font-weight:800;margin:0;text-shadow:0 2px 8px rgba(0,0,0,0.5)">🚛 ShipDoc</p>
-<p style="color:#E2E8F0;font-size:0.95rem;margin:0;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Shipper Compliance Portal — Dangerous Goods & Customs Clearance</p>
+<p style="color:#5EE8E4;font-size:2rem;font-weight:800;margin:0;text-shadow:0 2px 8px rgba(0,0,0,0.8)">🚛 ShipDoc</p>
+<p style="color:#F1F5F9;font-size:0.95rem;margin:0;text-shadow:0 1px 6px rgba(0,0,0,0.9)">Shipper Compliance Portal — Dangerous Goods & Customs Clearance</p>
 <p style="color:#94A3B8;font-size:0.8rem;margin-top:0.3rem">EU AI Act Compliant · Human-in-the-loop · GDPR Compliant · 2026</p>
 </div>
 <hr style="border-color:rgba(94,232,228,0.3);margin:0.8rem 0"/>
@@ -99,12 +115,12 @@ if generate:
             hs_status = "✅ HS Code provided" if hs_code else "⚠️ HS Code not provided"
 
             st.markdown(f"""
-            <div style="background:rgba(255,255,255,0.10);border:1px solid rgba(94,232,228,0.4);border-radius:10px;padding:0.8rem 1.2rem;margin-bottom:1rem;display:flex;gap:2rem;flex-wrap:wrap;backdrop-filter:blur(4px)">
+            <div style="background:rgba(10,20,40,0.70);border:1px solid rgba(94,232,228,0.4);border-radius:10px;padding:0.8rem 1.2rem;margin-bottom:1rem;display:flex;gap:2rem;flex-wrap:wrap;backdrop-filter:blur(6px)">
                 <span style="color:#5EE8E4;font-weight:700">🗺️ {route}</span>
-                <span style="color:#E2E8F0">🚛 {transport_mode}</span>
-                <span style="color:#E2E8F0">⚠️ {dg_label}</span>
-                <span style="color:#E2E8F0">{hs_status}</span>
-                <span style="color:#E2E8F0">{eori_status}</span>
+                <span style="color:#F1F5F9">🚛 {transport_mode}</span>
+                <span style="color:#F1F5F9">⚠️ {dg_label}</span>
+                <span style="color:#F1F5F9">{hs_status}</span>
+                <span style="color:#F1F5F9">{eori_status}</span>
             </div>
             """, unsafe_allow_html=True)
 
@@ -117,7 +133,7 @@ if generate:
 
             st.markdown("### 📋 Full Compliance Checklist")
             st.markdown('<div class="result-box">', unsafe_allow_html=True)
-            st.markdown(f'<p style="color:white;white-space:pre-wrap;font-size:0.92rem;line-height:1.7">{result["ai_guidance"]}</p>', unsafe_allow_html=True)
+            st.markdown(f'<p style="color:#F1F5F9;white-space:pre-wrap;font-size:0.92rem;line-height:1.7">{result["ai_guidance"]}</p>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
 
             st.markdown("<br>", unsafe_allow_html=True)
