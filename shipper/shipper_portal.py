@@ -1,41 +1,37 @@
 import streamlit as st
-import base64, os
 from shipper_agent import get_required_documents
 
 st.set_page_config(page_title="ShipDoc — Shipper Compliance Portal", page_icon="🚛", layout="wide")
 
-def get_bg_css():
-    bg_url = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80"
-    return f"""
-    <style>
-    .stApp {{
-        background-image: linear-gradient(rgba(10,20,40,0.72), rgba(10,20,40,0.72)), url("{bg_url}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-    }}
-    .card{{background:rgba(26,158,155,0.10);border:1px solid rgba(26,158,155,0.30);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem}}
-    .section-header{{color:#1A9E9B;font-weight:700;font-size:1.05rem;margin-bottom:0.6rem}}
-    .result-box{{background:rgba(26,158,155,0.10);border:1px solid #1A9E9B;border-radius:12px;padding:1.5rem;margin-top:1rem}}
-    .flag-box{{background:rgba(245,158,11,0.12);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
-    .error-box{{background:rgba(239,68,68,0.12);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
-    .success-box{{background:rgba(34,197,94,0.10);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
-    .stButton>button{{background:linear-gradient(135deg,#1A9E9B,#0D7C7A);color:white;border:none;border-radius:8px;padding:0.6rem 2rem;font-weight:700;font-size:1rem;width:100%}}
-    label{{color:#CBD5E1 !important}}
-    h1,h2,h3,p,span,div{{color:white}}
-    .stSelectbox label, .stTextInput label, .stRadio label{{color:#CBD5E1 !important}}
-    </style>
-    """
+bg_url = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1600&q=80"
 
-st.markdown(get_bg_css(), unsafe_allow_html=True)
+st.markdown(f"""
+<style>
+.stApp {{
+    background-image: linear-gradient(rgba(5,15,30,0.38), rgba(5,15,30,0.38)), url("{bg_url}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}}
+.card{{background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1rem;backdrop-filter:blur(6px)}}
+.section-header{{color:#5EE8E4;font-weight:700;font-size:1.05rem;margin-bottom:0.6rem}}
+.result-box{{background:rgba(255,255,255,0.10);border:1px solid rgba(94,232,228,0.5);border-radius:12px;padding:1.5rem;margin-top:1rem;backdrop-filter:blur(6px)}}
+.flag-box{{background:rgba(245,158,11,0.18);border-left:4px solid #F59E0B;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+.error-box{{background:rgba(239,68,68,0.18);border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+.success-box{{background:rgba(34,197,94,0.15);border-left:4px solid #22C55E;border-radius:0 8px 8px 0;padding:0.7rem 1rem;margin-bottom:0.5rem;color:white;font-size:0.92rem}}
+.stButton>button{{background:linear-gradient(135deg,#1A9E9B,#0D7C7A);color:white;border:none;border-radius:8px;padding:0.6rem 2rem;font-weight:700;font-size:1rem;width:100%}}
+label, .stRadio label, .stCheckbox label{{color:#E2E8F0 !important}}
+h1,h2,h3{{color:white}}
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align:center;padding:1rem 0 0.5rem">
-<p style="color:#1A9E9B;font-size:2rem;font-weight:800;margin:0">🚛 ShipDoc</p>
-<p style="color:#94A3B8;font-size:0.95rem;margin:0">Shipper Compliance Portal — Dangerous Goods & Customs Clearance</p>
-<p style="color:#556677;font-size:0.8rem;margin-top:0.3rem">EU AI Act Compliant · Human-in-the-loop · GDPR Compliant · 2026</p>
+<p style="color:#5EE8E4;font-size:2rem;font-weight:800;margin:0;text-shadow:0 2px 8px rgba(0,0,0,0.5)">🚛 ShipDoc</p>
+<p style="color:#E2E8F0;font-size:0.95rem;margin:0;text-shadow:0 1px 4px rgba(0,0,0,0.6)">Shipper Compliance Portal — Dangerous Goods & Customs Clearance</p>
+<p style="color:#94A3B8;font-size:0.8rem;margin-top:0.3rem">EU AI Act Compliant · Human-in-the-loop · GDPR Compliant · 2026</p>
 </div>
-<hr style="border-color:rgba(26,158,155,0.2);margin:0.8rem 0"/>
+<hr style="border-color:rgba(94,232,228,0.3);margin:0.8rem 0"/>
 """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns(3)
@@ -103,12 +99,12 @@ if generate:
             hs_status = "✅ HS Code provided" if hs_code else "⚠️ HS Code not provided"
 
             st.markdown(f"""
-            <div style="background:rgba(26,158,155,0.08);border:1px solid rgba(26,158,155,0.3);border-radius:10px;padding:0.8rem 1.2rem;margin-bottom:1rem;display:flex;gap:2rem;flex-wrap:wrap">
-                <span style="color:#1A9E9B;font-weight:700">🗺️ {route}</span>
-                <span style="color:#94A3B8">🚛 {transport_mode}</span>
-                <span style="color:#94A3B8">⚠️ {dg_label}</span>
-                <span style="color:#94A3B8">{hs_status}</span>
-                <span style="color:#94A3B8">{eori_status}</span>
+            <div style="background:rgba(255,255,255,0.10);border:1px solid rgba(94,232,228,0.4);border-radius:10px;padding:0.8rem 1.2rem;margin-bottom:1rem;display:flex;gap:2rem;flex-wrap:wrap;backdrop-filter:blur(4px)">
+                <span style="color:#5EE8E4;font-weight:700">🗺️ {route}</span>
+                <span style="color:#E2E8F0">🚛 {transport_mode}</span>
+                <span style="color:#E2E8F0">⚠️ {dg_label}</span>
+                <span style="color:#E2E8F0">{hs_status}</span>
+                <span style="color:#E2E8F0">{eori_status}</span>
             </div>
             """, unsafe_allow_html=True)
 
@@ -131,4 +127,4 @@ if generate:
             st.error(f"Error: {result.get('error', 'Unknown error')}")
 
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown('<p style="color:#556677;text-align:center;font-size:0.8rem">ShipDoc · Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026 · EU AI Act Compliant · Human-in-the-loop</p>', unsafe_allow_html=True)
+st.markdown('<p style="color:#94A3B8;text-align:center;font-size:0.8rem">ShipDoc · Powered by ShipmentDoc Compliance AI · Kinda Faisal AI Consulting · 2026 · EU AI Act Compliant · Human-in-the-loop</p>', unsafe_allow_html=True)
