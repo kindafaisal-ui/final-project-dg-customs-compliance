@@ -40,7 +40,7 @@ AI Compliance Logic Engine (GPT-4o via LangChain)
         ↓
 LangSmith — full audit trail logged
         ↓
-📧 Gmail Alert — email to management at 06:00
+📧 Gmail Alert — email to management at 00:00
         ↓
 Streamlit Portal — operations team reviews flagged docs
         ↓
@@ -98,7 +98,7 @@ shipper_agent.py → OpenAI GPT-4o
 ┌─────────────────────────────────────────────────────────┐
 │              FREIGHT FORWARDER / OPERATIONS             │
 │  Uses Agent 1 — Freight Forwarder Portal                │
-│  n8n runs overnight → email alert at 06:00              │
+│  n8n runs overnight → email alert at 00:00              │
 │  Reviews flagged documents in Streamlit portal          │
 └─────────────────────────┬───────────────────────────────┘
                           │ Human approves ✅
@@ -165,7 +165,6 @@ shipper_agent.py → OpenAI GPT-4o
 
 ---
 
-## 💰 Solution Options
 
 
 
