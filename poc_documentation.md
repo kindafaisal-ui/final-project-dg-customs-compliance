@@ -15,6 +15,10 @@ Demonstrates that AI can automate compliance checking for international shipment
 
 ---
 
+## Demo Recording
+
+**Video:** https://YOUR-VIDEO-LINK-HERE
+
 ## 2. Live Portals
 
 | Portal | URL |
