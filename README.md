@@ -167,13 +167,7 @@ shipper_agent.py → OpenAI GPT-4o
 
 ## 💰 Solution Options
 
-| Tier | Price | Includes |
-|------|-------|---------|
-| Option A — Basic | €499/month | Shipper Portal only |
-| Option B — Standard | €999/month | Both portals + n8n + email alerts |
-| Option C — Enterprise | €1,999/month | Full system + custom routes + API access |
 
-**ROI Year 1 (Option B):** 215% return · Break-even < 1 month
 
 ---
 
