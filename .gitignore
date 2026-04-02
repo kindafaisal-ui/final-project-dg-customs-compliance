@@ -6,3 +6,4 @@ __pycache__/
 data/processed/
 shipper/.streamlit/secrets.toml
 .streamlit/secrets.toml
+presentation.pptx
