@@ -86,13 +86,13 @@ DOCUMENTS REQUIRED:
    Required fields: [fields]
    Common mistake: [mistake]
 
-COMPLIANCE NOTES:
-All documents reviewed by AI agent
+CRITICAL WARNINGS:
+- [warnings]
 
 SUBMISSION CHECKLIST:
 - [final checks]"""
 
-            response = client.chat.completions.create(
+            response = client.messages.create(
                 model="gpt-3.5-turbo",
                 max_tokens=1500,
                 messages=[{"role": "user", "content": prompt}]
@@ -107,7 +107,7 @@ SUBMISSION CHECKLIST:
 
             st.markdown("<br>", unsafe_allow_html=True)
             st.success("✅ Checklist generated! Please prepare all documents before submitting to your freight forwarder.")
-            st.markdown("<p style='color:#2DD4BF'>💡 Once your documents are ready, send them to your freight forwarder. They will run a final AI compliance check before dispatch.</p>", unsafe_allow_html=True)
+            st.info("💡 Once your documents are ready, send them to your freight forwarder. They will run a final AI compliance check before dispatch.")
 
         except Exception as e:
             st.error(f"Error: {str(e)}")
