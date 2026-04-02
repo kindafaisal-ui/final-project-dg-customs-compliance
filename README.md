@@ -13,6 +13,12 @@
 
 ---
 
+## 📹 Demo Recording
+
+https://github.com/user-attachments/assets/2dc91d9f-5d0f-4e7f-bd06-6c919b123574
+
+---
+
 ## 📋 Problem Statement
 
 International logistics compliance is one of the most time-consuming tasks in the supply chain. Operations staff spend **70–80% of their working day** manually checking whether dangerous goods and customs documents are complete, correctly formatted, and compliant with international agreements (ADR, IMDG, IATA, EU UCC, CMR). One mistake means a €50,000 fine or a truck stopped at the border for 2 days.
